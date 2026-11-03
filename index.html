@@ -141,8 +141,7 @@ header p { margin: 0; color: var(--teks-redup); }
       <h1>Teknik Komputer Jaringan</h1>
       <p>Cari berdasarkan role.</p>
     </div>
-    <button class="btn-tambah" onclick="bukaModal()">+ Tambah Data></button>
-    
+    <button class="btn-tambah" onclick="bukaModal()">+ Tambah Data</button>
   </header>
   <div class="kontrol">
     <input id="cari" type="search" placeholder="Cari nama atau NIS" aria-label="Cari nama atau NIS">
@@ -178,7 +177,7 @@ header p { margin: 0; color: var(--teks-redup); }
       </label>
 
       <label id="lblId">
-        NIS
+        <span id="teksLabelId">NIS</span>
         <input type="text" id="inputId" required>
       </label>
 
@@ -254,7 +253,7 @@ async function muatData() {
   tampilkanPesan("Memuat data...");
   let gabungan = [];
 
-  // Ambil Data Siswa (Ambil seluruh kolom yang tersedia)
+  // Ambil Data Siswa
   const { data: dataSiswa, error: errSiswa } = await db
     .from("siswa")
     .select("*")
@@ -419,16 +418,16 @@ function sesuaikanForm() {
   const role = document.getElementById("inputRole").value;
   const formSiswa = document.getElementById("formSiswaKhusus");
   const formGuru = document.getElementById("formGuruKhusus");
-  const lblId = document.getElementById("lblId");
+  const teksLabel = document.getElementById("teksLabelId");
 
   if (role === "guru") {
     formSiswa.style.display = "none";
     formGuru.style.display = "block";
-    lblId.childNodes[0].textContent = "NIP ";
+    teksLabel.textContent = "NIP";
   } else {
     formSiswa.style.display = "block";
     formGuru.style.display = "none";
-    lblId.childNodes[0].textContent = "NIS ";
+    teksLabel.textContent = "NIS";
   }
 }
 
@@ -440,13 +439,15 @@ document.getElementById("formTambah").addEventListener("submit", async (e) => {
   const foto = document.getElementById("inputFoto").value.trim() || null;
 
   if (role === "siswa") {
-    const tgl = document.getElementById("inputTanggal").value;
+    const tglInput = document.getElementById("inputTanggal").value;
+    const tgl = tglInput !== "" ? tglInput : null;
+
     const { error } = await db.from("siswa").insert([{
       nis: idVal,
       nama: nama,
       kelas: document.getElementById("inputKelas").value.trim() || null,
       jenis_kelamin: document.getElementById("inputJK").value,
-      tanggal_lahir: tgl ? tgl : null,
+      tanggal_lahir: tgl,
       alamat: document.getElementById("inputAlamat").value.trim() || null,
       foto_url: foto
     }]);
