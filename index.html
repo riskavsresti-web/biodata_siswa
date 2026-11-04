@@ -3,18 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"> 
-<title>Teknik Jaringan Komputer</title>
+<title>Teknik Komputer Jaringan</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #eef2f7;
   --kartu: #ffffff;
   --teks: #14213d;
-  --teks-redup: #5b667a;
-  --garis: #d6dde8;
-  --aksen: #4b5563;
+  --teks-redup: #718096;
+  --garis: #e2e8f0;
+  --aksen: #0066ff;
+  --kuning-edit: #d97706;
+  --merah-hapus: #dc2626;
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -23,7 +25,9 @@
     --teks: #e8edf6;
     --teks-redup: #98a4ba;
     --garis: #2a3650;
-    --aksen: #9ca3af;
+    --aksen: #1e60c8;
+    --kuning-edit: #f59e0b;
+    --merah-hapus: #ef4444;
   }
 }
 * { box-sizing: border-box; }
@@ -35,8 +39,18 @@ body {
   line-height: 1.5;
 }
 .wadah { max-width: 1100px; margin: 0 auto; padding: 24px 16px 48px; }
+header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; }
 header h1 { margin: 0 0 4px; font-size: 1.75rem; font-weight: 800; }
 header p { margin: 0; color: var(--teks-redup); }
+.btn-tambah {
+  background: var(--aksen);
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+}
 .kontrol { display: flex; gap: 10px; flex-wrap: wrap; margin: 20px 0 8px; }
 .kontrol input, .kontrol select {
   font: inherit;
@@ -44,10 +58,10 @@ header p { margin: 0; color: var(--teks-redup); }
   background: var(--kartu);
   border: 1px solid var(--garis);
   border-radius: 10px;
-  padding: 10px 12px;
+  padding: 10px 14px;
 }
 .kontrol input { flex: 1 1 220px; }
-.kontrol select { flex: 0 1 160px; }
+.kontrol select { flex: 0 1 180px; }
 .kontrol input:focus-visible, .kontrol select:focus-visible {
   outline: 2px solid var(--aksen);
   outline-offset: 1px;
@@ -55,62 +69,207 @@ header p { margin: 0; color: var(--teks-redup); }
 .jumlah { color: var(--teks-redup); font-size: 0.9rem; margin: 0 0 16px; }
 .daftar {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 16px;
 }
 .kartu {
   background: var(--kartu);
   border: 1px solid var(--garis);
-  border-radius: 14px;
+  border-radius: 16px;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
-.pita { height: 56px; background: #6b7280; }
-.isi { padding: 0 16px 16px; text-align: center; }
+.pita { height: 70px; background: #0066ff; border-radius: 16px 16px 0 0; }
+.isi { padding: 0 16px 16px; text-align: center; flex: 1; display: flex; flex-direction: column; }
 .foto {
   width: 76px; height: 76px;
-  margin: -38px auto 8px;
+  margin: -38px auto 12px;
   border-radius: 50%;
   border: 4px solid var(--kartu);
-  background: #f3f4f6;
-  color: #4b5563;
+  background: #e6effa;
+  color: #0066ff;
   display: grid; place-items: center; font-weight: 800; font-size: 1.5rem; overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 .foto img { width: 100%; height: 100%; object-fit: cover; }
-.nama { margin: 0; font-size: 1.05rem; font-weight: 800; }
-.nis { margin: 0 0 12px; color: var(--teks-redup); font-size: 0.85rem; }
-.rincian { margin: 0; text-align: left; font-size: 0.9rem; }
+.nama { margin: 0; font-size: 1rem; font-weight: 800; color: var(--teks); }
+.nis { margin: 2px 0 16px; color: var(--teks-redup); font-size: 0.8rem; }
+.rincian { margin: 0 0 16px; text-align: left; font-size: 0.85rem; flex: 1; }
 .rincian div {
   display: flex; justify-content: space-between; gap: 12px;
-  padding: 6px 0; border-top: 1px solid var(--garis);
+  padding: 4px 0;
 }
-.rincian dt { color: var(--teks-redup); }
-.rincian dd { margin: 0; font-weight: 600; text-align: right; }
+.rincian dt { color: var(--teks-redup); font-weight: 400; }
+.rincian dd { margin: 0; font-weight: 600; text-align: right; color: var(--teks); }
+
+/* Tombol Aksi Tambahan (Edit & Hapus di Pojok Kanan Bawah) */
+.aksi-kartu {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 10px;
+}
+.btn-edit {
+  background: #c57d1f;
+  color: #fff;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+.btn-hapus {
+  background: #c53030;
+  color: #fff;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
 .pesan { grid-column: 1 / -1; text-align: center; padding: 40px 16px; color: var(--teks-redup); }
 .pesan.galat { color: #b42318; }
 @media (prefers-color-scheme: dark) { .pesan.galat { color: #ff8b80; } }
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  place-items: center;
+  padding: 16px;
+  z-index: 100;
+}
+.modal.aktif { display: grid; }
+.modal-konten {
+  background: var(--kartu);
+  border: 1px solid var(--garis);
+  padding: 24px;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 420px;
+}
+.modal-konten h2 { margin-top: 0; font-size: 1.25rem; }
+.modal-konten form { display: flex; flex-direction: column; gap: 12px; }
+.modal-konten label { font-size: 0.85rem; color: var(--teks-redup); display: flex; flex-direction: column; gap: 4px; }
+.modal-konten input, .modal-konten select {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--garis);
+  background: var(--bg);
+  color: var(--teks);
+  font: inherit;
+}
+.modal-aksi { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+.btn-batal { background: transparent; border: 1px solid var(--garis); color: var(--teks); padding: 8px 14px; border-radius: 8px; cursor: pointer; }
+.btn-simpan { background: var(--aksen); border: none; color: #fff; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; }
 </style>
 </head>
 <body>
 <div class="wadah">
   <header>
-    <h1>Teknik Jaringan Komputer</h1>
-    <p>Cari berdasarkan role.</p>
+    <div>
+      <h1>Teknik Komputer Jaringan</h1>
+      <p>Cari berdasarkan role</p>
+    </div>
+    <button class="btn-tambah" onclick="bukaModal()">+ Tambah Data</button>
   </header>
   <div class="kontrol">
-    <input id="cari" type="search" placeholder="Cari nama atau NIS" aria-label="Cari nama atau NIS">
+    <input id="cari" type="search" placeholder="Cari nama, NIS, atau NIP" aria-label="Cari nama atau NIS">
+    <select id="filterRole" aria-label="Filter Role">
+      <option value="">Semua (Guru / Siswa)</option>
+      <option value="siswa">Siswa</option>
+      <option value="guru">Guru</option>
+    </select>
     <select id="filterKelas" aria-label="Filter kelas">
-      <option value="">Semua kelas</option>
+      <option value="">Semua Kelas / Mapel</option>
     </select>
   </div>
   <p id="jumlah" class="jumlah" aria-live="polite"></p>
   <main id="daftar" class="daftar"></main>
 </div>
 
+<div id="modalForm" class="modal">
+  <div class="modal-konten">
+    <h2 id="judulModal">Tambah Data Baru</h2>
+    <form id="formTambah">
+      <!-- Field tersembunyi untuk menyimpan ID / mode edit -->
+      <input type="hidden" id="editId" value="">
+
+      <label>
+        Role
+        <select id="inputRole" onchange="sesuaikanForm()">
+          <option value="siswa">Siswa</option>
+          <option value="guru">Guru</option>
+        </select>
+      </label>
+
+      <label>
+        Nama Lengkap
+        <input type="text" id="inputNama" required>
+      </label>
+
+      <label id="lblId">
+        NIS
+        <input type="text" id="inputId" required>
+      </label>
+
+      <div id="formSiswaKhusus">
+        <label>
+          Kelas
+          <input type="text" id="inputKelas" placeholder="Contoh: XI TKJ 1">
+        </label>
+        <label>
+          Jenis Kelamin
+          <select id="inputJK">
+            <option value="Laki-laki">Laki-laki</option>
+            <option value="Perempuan">Perempuan</option>
+          </select>
+        </label>
+        <label>
+          Tanggal Lahir
+          <input type="date" id="inputTanggal">
+        </label>
+        <label>
+          Alamat
+          <input type="text" id="inputAlamat">
+        </label>
+      </div>
+
+      <div id="formGuruKhusus" style="display: none;">
+        <label>
+          Jurusan
+          <input type="text" id="inputJurusan" value="Teknik Komputer Jaringan">
+        </label>
+        <label>
+          Mata Pelajaran
+          <input type="text" id="inputMapel" placeholder="Contoh: Admin Jaringan">
+        </label>
+      </div>
+
+      <label>
+        URL Foto (Optional)
+        <input type="url" id="inputFoto" placeholder="https://...">
+      </label>
+
+      <div class="modal-aksi">
+        <button type="button" class="btn-batal" onclick="tutupModal()">Batal</button>
+        <button type="submit" class="btn-simpan">Simpan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
-// --- KONFIGURASI SUPABASE ---
-const SUPABASE_URL = "https://vbawwridtxnpasuamvug.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZiYXd3cmlkdHhucGFzdWFtdnVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE4OTI3OTYsImV4cCI6MjEwNzQ2ODc5Nn0.2OJ_ckWEri6hh2unM9-UNa0eAl24ZtzlB33NPsvqe78";
+const SUPABASE_URL = "https://wvvmhxeuhyeqeqqwphlf.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind2dm1oeGV1aHllcWVxcXdwaGxmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE4NzkwMjksImV4cCI6MjEwNzQ1NTAyOX0.3MFSSagPmF2jJ8YJ5vp3pEzzPcGOQ3_MZvr-mTf1HEA";
 
 const TAMPILKAN = {
   jenisKelamin: true,
@@ -124,41 +283,65 @@ const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const elDaftar = document.getElementById("daftar");
 const elJumlah = document.getElementById("jumlah");
 const elCari = document.getElementById("cari");
+const elRole = document.getElementById("filterRole");
 const elKelas = document.getElementById("filterKelas");
 let semuaSiswa = [];
 
 async function muatData() {
-  tampilkanPesan("Memuat data siswa...");
-  const { data, error } = await db
+  tampilkanPesan("Memuat data...");
+  let gabungan = [];
+
+  const { data: dataSiswa, error: errSiswa } = await db
     .from("siswa")
-    .select("nis, nama, kelas, jenis_kelamin, tanggal_lahir, alamat, foto_url")
+    .select("*")
     .order("nama");
 
-  if (error) {
-    console.error("Detail Error:", error);
-    tampilkanPesan("Data tidak bisa dimuat. Periksa URL dan anon key, nama tabel, serta policy RLS di Supabase.", true);
-    return;
+  if (errSiswa) {
+    console.error("Error Siswa:", errSiswa.message);
+  } else if (dataSiswa) {
+    gabungan = gabungan.concat(dataSiswa.map(s => ({ ...s, role: "siswa" })));
   }
-  semuaSiswa = data;
+
+  try {
+    const { data: dataGuru, error: errGuru } = await db
+      .from("guru")
+      .select("*")
+      .order("nama");
+
+    if (errGuru) {
+      console.warn("Error Guru:", errGuru.message);
+    } else if (dataGuru) {
+      gabungan = gabungan.concat(dataGuru.map(g => ({ ...g, role: "guru" })));
+    }
+  } catch (e) {
+    console.warn("Tabel guru error:", e);
+  }
+
+  semuaSiswa = gabungan;
   isiPilihanKelas();
   tampilkanSiswa();
 }
 
 function tampilkanSiswa() {
   const kataKunci = elCari.value.trim().toLowerCase();
+  const roleDipilih = elRole ? elRole.value : "";
   const kelasDipilih = elKelas.value;
 
   const hasil = semuaSiswa.filter((s) => {
-    const cocokKelas = !kelasDipilih || s.kelas === kelasDipilih;
-    const cocokCari = !kataKunci || s.nama.toLowerCase().includes(kataKunci) || s.nis.toLowerCase().includes(kataKunci);
-    return cocokKelas && cocokCari;
+    const cocokRole = !roleDipilih || s.role === roleDipilih;
+    const cocokKelas = !kelasDipilih || s.kelas === kelasDipilih || s.mapel === kelasDipilih;
+    const nama = (s.nama || "").toLowerCase();
+    const id = (s.nis || s.nip || "").toLowerCase();
+    const cocokCari = !kataKunci || nama.includes(kataKunci) || id.includes(kataKunci);
+    
+    return cocokRole && cocokKelas && cocokCari;
   });
 
-  elJumlah.textContent = hasil.length + " dari " + semuaSiswa.length + " siswa";
+  elJumlah.textContent = hasil.length + " dari " + semuaSiswa.length + " data";
   elDaftar.replaceChildren();
 
   if (hasil.length === 0) {
-    tampilkanPesan(semuaSiswa.length === 0 ? "Belum ada data siswa. Tambahkan data lewat Table Editor di Supabase." : "Tidak ada siswa yang cocok. Coba kata kunci atau kelas lain.");
+    tampilkanPesan(semuaSiswa.length === 0 ? "Belum ada data." : "Tidak ada data yang cocok.");
     return;
   }
 
@@ -184,15 +367,37 @@ function buatKartu(s) {
 
   isi.appendChild(foto);
   isi.appendChild(el("h2", "nama", s.nama));
-  isi.appendChild(el("p", "nis", "NIS " + s.nis));
+  isi.appendChild(el("p", "nis", s.role === "guru" ? ("NIS. " + (s.nip || "-")) : ("NIS. " + (s.nis || "-"))));
 
   const rincian = el("dl", "rincian");
-  tambahBaris(rincian, "Kelas", s.kelas);
-  if (TAMPILKAN.jenisKelamin) tambahBaris(rincian, "Jenis kelamin", s.jenis_kelamin);
-  if (TAMPILKAN.tanggalLahir) tambahBaris(rincian, "Tanggal lahir", formatTanggal(s.tanggal_lahir));
-  if (TAMPILKAN.alamat) tambahBaris(rincian, "Alamat", s.alamat);
-  
+
+  if (s.role === "guru") {
+    tambahBaris(rincian, "Jurusan", s.jurusan || "Teknik Komputer Jaringan");
+    tambahBaris(rincian, "Mata Pelajaran", s.mapel);
+  } else {
+    tambahBaris(rincian, "Kelas", s.kelas);
+    if (TAMPILKAN.jenisKelamin && s.jenis_kelamin) tambahBaris(rincian, "Jenis kelamin", s.jenis_kelamin);
+    if (TAMPILKAN.tanggalLahir && s.tanggal_lahir) tambahBaris(rincian, "Tanggal lahir", formatTanggal(s.tanggal_lahir));
+    if (TAMPILKAN.alamat && s.alamat) tambahBaris(rincian, "Alamat", s.alamat);
+  }
+
   isi.appendChild(rincian);
+
+  // Penambahan Tombol Edit & Hapus
+  const divAksi = el("div", "aksi-kartu");
+  
+  const btnEdit = el("button", "btn-edit", "Edit");
+  btnEdit.type = "button";
+  btnEdit.onclick = () => editData(s);
+
+  const btnHapus = el("button", "btn-hapus", "Hapus");
+  btnHapus.type = "button";
+  btnHapus.onclick = () => hapusData(s);
+
+  divAksi.appendChild(btnEdit);
+  divAksi.appendChild(btnHapus);
+  isi.appendChild(divAksi);
+
   kartu.appendChild(isi);
   return kartu;
 }
@@ -213,7 +418,7 @@ function tambahBaris(dl, label, nilai) {
 }
 
 function inisial(nama) {
-  return nama.split(" ").filter(Boolean).slice(0, 2).map((k) => k[0].toUpperCase()).join("");
+  return (nama || "").split(" ").filter(Boolean).slice(0, 2).map((k) => k[0].toUpperCase()).join("");
 }
 
 function formatTanggal(teks) {
@@ -226,17 +431,172 @@ function tampilkanPesan(teks, galat) {
 }
 
 function isiPilihanKelas() {
-  const daftarKelas = [...new Set(semuaSiswa.map((s) => s.kelas).filter(Boolean))].sort();
-  daftarKelas.forEach((k) => {
+  const role = elRole ? elRole.value : "";
+  elKelas.replaceChildren();
+
+  const optDefault = el("option", "", role === "guru" ? "Semua Mapel" : (role === "siswa" ? "Semua Kelas" : "Semua Kelas / Mapel"));
+  optDefault.value = "";
+  elKelas.appendChild(optDefault);
+
+  let daftar = [];
+  if (role === "siswa") {
+    daftar = [...new Set(semuaSiswa.filter(s => s.role === "siswa").map(s => s.kelas).filter(Boolean))];
+  } else if (role === "guru") {
+    daftar = [...new Set(semuaSiswa.filter(s => s.role === "guru").map(s => s.mapel).filter(Boolean))];
+  } else {
+    const k = semuaSiswa.filter(s => s.role === "siswa").map(s => s.kelas).filter(Boolean);
+    const m = semuaSiswa.filter(s => s.role === "guru").map(s => s.mapel).filter(Boolean);
+    daftar = [...new Set([...k, ...m])];
+  }
+
+  daftar.sort().forEach((k) => {
     const opsi = el("option", "", k);
     opsi.value = k;
     elKelas.appendChild(opsi);
   });
 }
 
+function bukaModal() {
+  document.getElementById("judulModal").textContent = "Tambah Data Baru";
+  document.getElementById("editId").value = "";
+  document.getElementById("inputRole").disabled = false;
+  document.getElementById("modalForm").classList.add("aktif");
+}
+
+function tutupModal() {
+  document.getElementById("modalForm").classList.remove("aktif");
+  document.getElementById("formTambah").reset();
+  document.getElementById("editId").value = "";
+  document.getElementById("inputRole").disabled = false;
+  sesuaikanForm();
+}
+
+function sesuaikanForm() {
+  const role = document.getElementById("inputRole").value;
+  const formSiswa = document.getElementById("formSiswaKhusus");
+  const formGuru = document.getElementById("formGuruKhusus");
+  const lblId = document.getElementById("lblId");
+
+  if (role === "guru") {
+    formSiswa.style.display = "none";
+    formGuru.style.display = "block";
+    lblId.childNodes[0].textContent = "NIP ";
+  } else {
+    formSiswa.style.display = "block";
+    formGuru.style.display = "none";
+    lblId.childNodes[0].textContent = "NIS ";
+  }
+}
+
+function editData(data) {
+  document.getElementById("judulModal").textContent = "Edit Data " + (data.role === "guru" ? "Guru" : "Siswa");
+  document.getElementById("editId").value = data.id || data.nis || data.nip;
+  
+  const elRoleInput = document.getElementById("inputRole");
+  elRoleInput.value = data.role;
+  elRoleInput.disabled = true;
+  sesuaikanForm();
+
+  document.getElementById("inputNama").value = data.nama || "";
+  document.getElementById("inputId").value = data.nis || data.nip || "";
+  document.getElementById("inputFoto").value = data.foto_url || "";
+
+  if (data.role === "siswa") {
+    document.getElementById("inputKelas").value = data.kelas || "";
+    document.getElementById("inputJK").value = data.jenis_kelamin || "Laki-laki";
+    document.getElementById("inputTanggal").value = data.tanggal_lahir || "";
+    document.getElementById("inputAlamat").value = data.alamat || "";
+  } else {
+    document.getElementById("inputJurusan").value = data.jurusan || "Teknik Komputer Jaringan";
+    document.getElementById("inputMapel").value = data.mapel || "";
+  }
+
+  document.getElementById("modalForm").classList.add("aktif");
+}
+
+async function hapusData(data) {
+  const konfirmasi = confirm(`Apakah Anda yakin ingin menghapus ${data.nama}?`);
+  if (!konfirmasi) return;
+
+  const tabel = data.role === "siswa" ? "siswa" : "guru";
+  const fieldId = data.id ? "id" : (data.role === "siswa" ? "nis" : "nip");
+  const valId = data.id || (data.role === "siswa" ? data.nis : data.nip);
+
+  const { error } = await db.from(tabel).delete().eq(fieldId, valId);
+
+  if (error) {
+    alert("Gagal menghapus data: " + error.message);
+  } else {
+    alert("Data berhasil dihapus!");
+    muatData();
+  }
+}
+
+document.getElementById("formTambah").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const editId = document.getElementById("editId").value;
+  const role = document.getElementById("inputRole").value;
+  const nama = document.getElementById("inputNama").value.trim();
+  const idVal = document.getElementById("inputId").value.trim();
+  const foto = document.getElementById("inputFoto").value.trim() || null;
+
+  if (role === "siswa") {
+    const tgl = document.getElementById("inputTanggal").value;
+    const payload = {
+      nis: idVal,
+      nama: nama,
+      kelas: document.getElementById("inputKelas").value.trim() || null,
+      jenis_kelamin: document.getElementById("inputJK").value,
+      tanggal_lahir: tgl ? tgl : null,
+      alamat: document.getElementById("inputAlamat").value.trim() || null,
+      foto_url: foto
+    };
+
+    let res;
+    if (editId) {
+      res = await db.from("siswa").update(payload).eq(editId.length > 10 ? "id" : "nis", editId);
+    } else {
+      res = await db.from("siswa").insert([payload]);
+    }
+
+    if (res.error) {
+      alert("Gagal menyimpan data siswa: " + res.error.message);
+      return;
+    }
+  } else {
+    const payload = {
+      nip: idVal,
+      nama: nama,
+      jurusan: document.getElementById("inputJurusan").value.trim() || null,
+      mapel: document.getElementById("inputMapel").value.trim() || null,
+      foto_url: foto
+    };
+
+    let res;
+    if (editId) {
+      res = await db.from("guru").update(payload).eq(editId.length > 10 ? "id" : "nip", editId);
+    } else {
+      res = await db.from("guru").insert([payload]);
+    }
+
+    if (res.error) {
+      alert("Gagal menyimpan data guru: " + res.error.message);
+      return;
+    }
+  }
+
+  alert("Data berhasil disimpan!");
+  tutupModal();
+  muatData();
+});
+
+elRole.addEventListener("change", () => {
+  isiPilihanKelas();
+  tampilkanSiswa();
+});
 elCari.addEventListener("input", tampilkanSiswa);
 elKelas.addEventListener("change", tampilkanSiswa);
 muatData();
 </script>
 </body>
-                                                                                                 </html>
+</html>
